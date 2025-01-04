@@ -38,3 +38,27 @@ public interface Supplier<T> {
     T get();
 }
 ```
+
+Puedes crear un objeto LocalDate utilizando el método de fábrica now(). Este ejemplo muestra cómo usar un Supplier para llamar a este método de fábrica:
+
+```java
+Supplier<LocalDate> s1 = LocalDate::now;
+Supplier<LocalDate> s2 = () -> LocalDate.now();
+
+LocalDate d1 = s1.get();
+LocalDate d2 = s2.get();
+
+System.out.println(d1);
+System.out.println(d2);
+```
+
+Este ejemplo imprime una fecha como 2020–02–20 dos veces. También es una buena oportunidad para repasar las referencias a métodos estáticos. La referencia al método LocalDate::now se utiliza para crear un Supplier y asignarlo a una variable intermedia s1. Un Supplier se usa con frecuencia cuando se construyen nuevos objetos. Por ejemplo, podemos imprimir dos objetos StringBuilder vacíos:
+
+```java
+Supplier<StringBuilder> s1 = StringBuilder::new;
+Supplier<StringBuilder> s2 = () -> new StringBuilder();
+System.out.println(s1.get());
+System.out.println(s2.get());
+```
+
+Esta vez, usamos una referencia al constructor para crear el objeto. Hemos estado usando genéricos para declarar qué tipo de Supplier estamos utilizando. Esto puede volverse un poco extenso de leer. ¿Puedes darte cuenta de lo que hace el siguiente fragmento? Solo tómalo paso a paso.
