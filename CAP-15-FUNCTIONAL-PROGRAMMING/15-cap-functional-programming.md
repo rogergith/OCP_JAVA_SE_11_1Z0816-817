@@ -25,3 +25,16 @@ Si bien necesitas conocer muchas interfaces funcionales para el examen, por suer
 Como viste en el Capítulo 12, puedes nombrar una interfaz funcional como quieras. Los únicos requisitos son que sea un nombre de interfaz válido y que contenga un único método abstracto. La Tabla 15.1 es importante porque estas interfaces se utilizan con frecuencia en los streams y en otras clases que vienen con Java, razón por la cual es necesario memorizarlas para el examen.
 
 > **Note:** Como aprenderás en el Capítulo 18, "Concurrencia", existen dos interfaces funcionales más llamadas Runnable y Callable, que necesitas conocer para el examen. Se utilizan principalmente para la concurrencia. No obstante, pueden aparecer en el examen cuando te pidan reconocer qué interfaz funcional usar. Lo único que necesitas saber es que Runnable y Callable no reciben parámetros; Runnable devuelve void y Callable devuelve un tipo genérico.
+
+Veamos cómo implementar cada una de estas interfaces. Dado que tanto las lambdas como las referencias a métodos aparecen en gran parte del examen, mostraremos una implementación con ambas cuando sea posible. Después de presentar las interfaces, también cubriremos algunos métodos de conveniencia disponibles en ellas.
+
+## IMPLEMENTING SUPPLIER
+
+Un Supplier se utiliza cuando deseas generar o proporcionar valores sin recibir ninguna entrada. La interfaz Supplier se define de la siguiente manera:
+
+```java
+@FunctionalInterface
+public interface Supplier<T> {
+    T get();
+}
+```
