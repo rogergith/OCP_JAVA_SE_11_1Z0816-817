@@ -137,3 +137,132 @@ System.out.println(map);
 ```
 
 La salida es `{chicken=Cluck, chick=Tweep}`, lo que demuestra que un `BiConsumer` puede usar el mismo tipo para ambos parámetros genéricos `T` y `U`.
+
+## IMPLEMENTING PREDICATE AND BIPREDICATE
+Has visto `Predicate` con `removeIf()` en el Capítulo 14. `Predicate` se usa a menudo al filtrar o al hacer coincidencias. Ambas son operaciones comunes. Un `BiPredicate` es igual que un `Predicate`, excepto que toma dos parámetros en lugar de uno. Las interfaces se definen de la siguiente manera:
+
+```java
+@FunctionalInterface
+public interface Predicate<T> {
+    boolean test(T t);
+    // omitted default and static methods
+}
+
+@FunctionalInterface
+public interface BiPredicate<T, U> {
+    boolean test(T t, U u);
+    // omitted default methods
+}
+```
+
+Debe ser ya noticia antigua que puedes usar un `Predicate` para probar una condición.
+
+```java
+Predicate<String> p1 = String::isEmpty;
+Predicate<String> p2 = x -> x.isEmpty();
+System.out.println(p1.test("")); // true
+System.out.println(p2.test("")); // true
+```
+
+Esto imprime `true` dos veces. Más interesante es un `BiPredicate`. Este ejemplo también imprime `true` dos veces:
+
+```java
+BiPredicate<String, String> b1 = String::startsWith;
+BiPredicate<String, String> b2 =
+    (string, prefix) -> string.startsWith(prefix);
+System.out.println(b1.test("chicken", "chick")); // true
+System.out.println(b2.test("chicken", "chick")); // true
+```
+
+La referencia al método incluye tanto la variable de instancia como el parámetro para `startsWith()`. Este es un buen ejemplo de cómo las referencias a métodos ahorran bastante tipeo. La desventaja es que son menos explícitas, y realmente tienes que entender lo que está sucediendo.
+
+## IMPLEMENTING FUNCTION AND BIFUNCTION
+
+En el Capítulo 14, utilizamos `Function` con el método `merge()`. Una `Function` es responsable de convertir un parámetro en un valor de un tipo potencialmente diferente y devolverlo. De manera similar, una `BiFunction` es responsable de convertir dos parámetros en un valor y devolverlo. Las interfaces se definen de la siguiente manera:
+
+```java
+@FunctionalInterface
+public interface Function<T, R> {
+    R apply(T t);
+    // omitted default and static methods
+}
+
+@FunctionalInterface
+public interface BiFunction<T, U, R> {
+    R apply(T t, U u);
+    // omitted default method
+}
+```
+
+Por ejemplo, esta función convierte una `String` en la longitud de la `String`:
+
+```java
+Function<String, Integer> f1 = String::length;
+Function<String, Integer> f2 = x -> x.length();
+System.out.println(f1.apply("cluck")); // 5
+System.out.println(f2.apply("cluck")); // 5
+```
+
+Esta función convierte una `String` en un `Integer`. Bueno, técnicamente convierte la `String` en un `int`, que se autoboxea en un `Integer`. Los tipos no tienen que ser diferentes. Lo siguiente combina dos objetos `String` y produce otra `String`:
+
+```java
+BiFunction<String, String, String> b1 = String::concat;
+BiFunction<String, String, String> b2 =
+    (string, toAdd) -> string.concat(toAdd);
+System.out.println(b1.apply("baby ", "chick")); // baby chick
+System.out.println(b2.apply("baby ", "chick")); // baby chick
+```
+
+Los dos primeros tipos en la `BiFunction` son los tipos de entrada. El tercero es el tipo de resultado. Para la referencia al método, el primer parámetro es la instancia sobre la que se llama a `concat()`, y el segundo se pasa a `concat()`.
+
+CREANDO TUS PROPIAS INTERFACES FUNCIONALES
+
+Java proporciona una interfaz incorporada para funciones con uno o dos parámetros. ¿Qué pasa si necesitas más? No hay problema. Supongamos que quieres crear una interfaz funcional para la velocidad de las ruedas de cada rueda en un triciclo. Podrías crear una interfaz funcional como esta:
+
+```java
+@FunctionalInterface
+interface TriFunction<T, U, V, R> {
+    R apply(T t, U u, V v);
+}
+```
+
+Hay cuatro parámetros de tipo. Los primeros tres proporcionan los tipos de las tres velocidades de las ruedas. El cuarto es el tipo de retorno. Ahora supongamos que quieres crear una función para determinar qué tan rápido va tu cuadricóptero dado el poder de los cuatro motores. Podrías crear una interfaz funcional como la siguiente:
+
+```java
+@FunctionalInterface
+interface QuadFunction<T, U, V, W, R> {
+    R apply(T t, U u, V v, W w);
+}
+```
+
+Aquí hay cinco parámetros de tipo. Los primeros cuatro proporcionan los tipos de los cuatro motores. Idealmente, estos serían del mismo tipo, pero nunca se sabe. El quinto es el tipo de retorno en este ejemplo.
+
+Las interfaces incorporadas de Java están destinadas a facilitar las interfaces funcionales más comunes que necesitarás. De ninguna manera es una lista exhaustiva. Recuerda que puedes agregar las interfaces funcionales que desees, y Java las empareja cuando usas lambdas o referencias a métodos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
