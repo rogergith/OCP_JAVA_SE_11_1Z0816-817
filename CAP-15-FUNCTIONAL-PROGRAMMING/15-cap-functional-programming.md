@@ -217,7 +217,7 @@ Los dos primeros tipos en la `BiFunction` son los tipos de entrada. El tercero e
 
 CREANDO TUS PROPIAS INTERFACES FUNCIONALES
 
-Java proporciona una interfaz incorporada para funciones con uno o dos parámetros. ¿Qué pasa si necesitas más? No hay problema. Supongamos que quieres crear una interfaz funcional para la velocidad de las ruedas de cada rueda en un triciclo. Podrías crear una interfaz funcional como esta:
+> Java proporciona una interfaz incorporada para funciones con uno o dos parámetros. ¿Qué pasa si necesitas más? No hay problema. Supongamos que quieres crear una interfaz funcional para la velocidad de las ruedas de cada rueda en un triciclo. Podrías crear una interfaz funcional como esta:
 
 ```java
 @FunctionalInterface
@@ -226,7 +226,7 @@ interface TriFunction<T, U, V, R> {
 }
 ```
 
-Hay cuatro parámetros de tipo. Los primeros tres proporcionan los tipos de las tres velocidades de las ruedas. El cuarto es el tipo de retorno. Ahora supongamos que quieres crear una función para determinar qué tan rápido va tu cuadricóptero dado el poder de los cuatro motores. Podrías crear una interfaz funcional como la siguiente:
+> Hay cuatro parámetros de tipo. Los primeros tres proporcionan los tipos de las tres velocidades de las ruedas. El cuarto es el tipo de retorno. Ahora supongamos que quieres crear una función para determinar qué tan rápido va tu cuadricóptero dado el poder de los cuatro motores. Podrías crear una interfaz funcional como la siguiente:
 
 ```java
 @FunctionalInterface
@@ -235,9 +235,9 @@ interface QuadFunction<T, U, V, W, R> {
 }
 ```
 
-Aquí hay cinco parámetros de tipo. Los primeros cuatro proporcionan los tipos de los cuatro motores. Idealmente, estos serían del mismo tipo, pero nunca se sabe. El quinto es el tipo de retorno en este ejemplo.
+> Aquí hay cinco parámetros de tipo. Los primeros cuatro proporcionan los tipos de los cuatro motores. Idealmente, estos serían del mismo tipo, pero nunca se sabe. El quinto es el tipo de retorno en este ejemplo.
 
-Las interfaces incorporadas de Java están destinadas a facilitar las interfaces funcionales más comunes que necesitarás. De ninguna manera es una lista exhaustiva. Recuerda que puedes agregar las interfaces funcionales que desees, y Java las empareja cuando usas lambdas o referencias a métodos.
+> Las interfaces incorporadas de Java están destinadas a facilitar las interfaces funcionales más comunes que necesitarás. De ninguna manera es una lista exhaustiva. Recuerda que puedes agregar las interfaces funcionales que desees, y Java las empareja cuando usas lambdas o referencias a métodos.
 
 
 
