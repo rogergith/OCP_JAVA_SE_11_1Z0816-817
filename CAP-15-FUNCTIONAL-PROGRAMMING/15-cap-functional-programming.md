@@ -100,3 +100,40 @@ public interface BiConsumer<T, U> {
     // omitted default method
 }
 ```
+
+> **Note:** Te darás cuenta de este patrón. “Bi” significa “dos”. Proviene del latín, pero puedes recordarlo con palabras en inglés como *binary* (0 o 1) o *bicycle* (dos ruedas). Siempre agrega otro parámetro cuando veas que aparece “Bi”.
+
+Usaste un `Consumer` en el Capítulo 14 con `forEach()`. Aquí tienes el ejemplo asignado realmente a la interfaz `Consumer`:
+
+```java
+Consumer<String> c1 = System.out::println;
+Consumer<String> c2 = x -> System.out.println(x);
+c1.accept("Annie");
+c2.accept("Annie");
+```
+
+Este ejemplo imprime `Annie` dos veces. `BiConsumer` se llama con dos parámetros. No tienen que ser del mismo tipo. Por ejemplo, podemos colocar una clave y un valor en un mapa usando esta interfaz:
+
+```java
+var map = new HashMap<String, Integer>();
+BiConsumer<String, Integer> b1 = map::put;
+BiConsumer<String, Integer> b2 = (k, v) -> map.put(k, v);
+b1.accept("chicken", 7);
+b2.accept("chick", 1);
+System.out.println(map);
+```
+
+La salida es `{chicken=7, chick=1}`, lo cual muestra que se llamaron ambas implementaciones de `BiConsumer`. Al declarar `b1`, usamos una referencia a un método de instancia sobre un objeto, porque queremos llamar a un método en la variable local `map`. El código para instanciar `b1` es bastante más corto que el de `b2`. Probablemente por eso al examen le gustan tanto las referencias a métodos.
+
+Como otro ejemplo, usamos el mismo tipo para ambos parámetros genéricos:
+
+```java
+var map = new HashMap<String, String>();
+BiConsumer<String, String> b1 = map::put;
+BiConsumer<String, String> b2 = (k, v) -> map.put(k, v);
+b1.accept("chicken", "Cluck");
+b2.accept("chick", "Tweep");
+System.out.println(map);
+```
+
+La salida es `{chicken=Cluck, chick=Tweep}`, lo que demuestra que un `BiConsumer` puede usar el mismo tipo para ambos parámetros genéricos `T` y `U`.
