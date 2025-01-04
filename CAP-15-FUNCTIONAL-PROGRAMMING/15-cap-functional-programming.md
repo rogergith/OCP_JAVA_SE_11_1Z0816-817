@@ -62,3 +62,23 @@ System.out.println(s2.get());
 ```
 
 Esta vez, usamos una referencia al constructor para crear el objeto. Hemos estado usando genéricos para declarar qué tipo de Supplier estamos utilizando. Esto puede volverse un poco extenso de leer. ¿Puedes darte cuenta de lo que hace el siguiente fragmento? Solo tómalo paso a paso.
+
+```java
+Supplier<ArrayList<String>> s3 = ArrayList<String>::new;
+ArrayList<String> a1 = s3.get();
+System.out.println(a1);
+```
+Tenemos un Supplier de un cierto tipo. Ese tipo resulta ser ArrayList<String>. Luego, al llamar a get(), se crea una nueva instancia de ArrayList<String>, que es el tipo genérico del Supplier, es decir, un genérico que contiene otro genérico. No es difícil de entender; solo debes revisar el código con atención cuando aparezca este tipo de situación.
+
+Observa cómo llamamos a get() en la interfaz funcional. ¿Qué sucedería si tratáramos de imprimir s3 directamente?
+
+```java
+System.out.println(s3);
+```
+
+El código imprime algo como esto:
+```java
+functionalinterface.BuiltIns$$Lambda$1/0x0000000800066840@4909b8da
+```
+
+Ese es el resultado de llamar a `toString()` en una lambda. ¡Puaj! De hecho, esto sí significa algo. Nuestra clase de prueba se llama `BuiltIns` y está en un paquete que creamos llamado `functionalinterface`. Luego aparece `$$`, lo que significa que la clase no existe en un archivo `.class` en el sistema de archivos, sino que existe solo en memoria. No tienes que preocuparte por el resto.
