@@ -82,3 +82,21 @@ functionalinterface.BuiltIns$$Lambda$1/0x0000000800066840@4909b8da
 ```
 
 Ese es el resultado de llamar a `toString()` en una lambda. ¡Puaj! De hecho, esto sí significa algo. Nuestra clase de prueba se llama `BuiltIns` y está en un paquete que creamos llamado `functionalinterface`. Luego aparece `$$`, lo que significa que la clase no existe en un archivo `.class` en el sistema de archivos, sino que existe solo en memoria. No tienes que preocuparte por el resto.
+
+## IMPLEMENTING CONSUMER AND BICONSUMER
+
+Usas un `Consumer` cuando quieres hacer algo con un parámetro, pero sin devolver nada. `BiConsumer` hace lo mismo, excepto que toma dos parámetros. Las interfaces se definen de la siguiente manera:
+
+```java
+@FunctionalInterface
+public interface Consumer<T> {
+    void accept(T t);
+    // omitted default method
+}
+
+@FunctionalInterface
+public interface BiConsumer<T, U> {
+    void accept(T t, U u);
+    // omitted default method
+}
+```
