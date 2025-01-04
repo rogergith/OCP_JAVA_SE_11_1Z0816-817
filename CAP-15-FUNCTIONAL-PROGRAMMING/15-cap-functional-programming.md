@@ -241,12 +241,151 @@ interface QuadFunction<T, U, V, W, R> {
 
 
 
+IMPLEMENTANDO `UNARYOPERATOR` Y `BINARYOPERATOR`
+
+`UnaryOperator` y `BinaryOperator` son un caso especial de `Function`. Requieren que todos los parámetros de tipo sean del mismo tipo. Un `UnaryOperator` transforma su valor en uno del mismo tipo. Por ejemplo, incrementar en uno es una operación unaria. De hecho, `UnaryOperator` extiende `Function`. Un `BinaryOperator` fusiona dos valores en uno del mismo tipo. Sumar dos números es una operación binaria. De manera similar, `BinaryOperator` extiende `BiFunction`. Las interfaces se definen de la siguiente manera:
+
+```java
+@FunctionalInterface
+public interface UnaryOperator<T> extends Function<T, T> { }
+
+@FunctionalInterface
+public interface BinaryOperator<T> extends BiFunction<T, T, T> {
+    // omitted static methods
+}
+```
+
+Esto significa que las firmas de los métodos se ven así:
+
+```java
+T apply(T t); // UnaryOperator
+T apply(T t1, T t2); // BinaryOperator
+```
+
+En la Javadoc, notarás que estos métodos en realidad se heredan de la superclase `Function`/`BiFunction`. Las declaraciones genéricas en la subclase son lo que obliga a que el tipo sea el mismo. Para el ejemplo unario, observa cómo el tipo de retorno es el mismo que el tipo del parámetro.
+
+```java
+UnaryOperator<String> u1 = String::toUpperCase;
+UnaryOperator<String> u2 = x -> x.toUpperCase();
+System.out.println(u1.apply("chirp")); // CHIRP
+System.out.println(u2.apply("chirp")); // CHIRP
+```
+
+Esto imprime `CHIRP` dos veces. No necesitamos especificar el tipo de retorno en los genéricos porque `UnaryOperator` lo requiere que sea el mismo que el parámetro. Y ahora aquí está el ejemplo binario:
+
+```java
+BinaryOperator<String> b1 = String::concat;
+BinaryOperator<String> b2 = (string, toAdd) -> string.concat(toAdd);
+System.out.println(b1.apply("baby ", "chick")); // baby chick
+System.out.println(b2.apply("baby ", "chick")); // baby chick
+```
+
+Observa que esto hace lo mismo que el ejemplo de `BiFunction`. El código es más conciso, lo que muestra la importancia de usar la interfaz funcional correcta. Es conveniente tener un tipo genérico especificado en lugar de tres.
 
 
+VERIFICANDO INTERFACES FUNCIONALES
 
+Es realmente importante conocer el número de parámetros, tipos, valor de retorno y nombre del método para cada una de las interfaces funcionales. Ahora sería un buen momento para memorizar la Tabla 15.1 si aún no lo has hecho. Hagamos algunos ejemplos para practicar.
 
+¿Qué interfaz funcional usarías en estas tres situaciones?
 
+1. Devuelve una `String` sin tomar ningún parámetro.
+2. Devuelve un `Boolean` y toma una `String`.
+3. Devuelve un `Integer` y toma dos `Integer`.
 
+¿Listo? Piensa en cuál es tu respuesta antes de continuar. En serio. Tienes que saber esto de memoria. Bien. La primera es un `Supplier<String>` porque genera un objeto y no toma parámetros. La segunda es una `Function<String, Boolean>` porque toma un parámetro y devuelve otro tipo. Es un poco complicado. Podrías pensar que es un `Predicate<String>`. Nota que un `Predicate` devuelve un primitivo `boolean` y no un objeto `Boolean`. Finalmente, la tercera es ya sea un `BinaryOperator<Integer>` o una `BiFunction<Integer, Integer, Integer>`. Dado que `BinaryOperator` es un caso especial de `BiFunction`, cualquiera de las dos es una respuesta correcta. `BinaryOperator<Integer>` es la mejor respuesta de las dos ya que es más específica.
+
+Intentemos este ejercicio de nuevo pero con código. Es más difícil con código. Con código, lo primero que haces es mirar cuántos parámetros toma la lambda y si hay un valor de retorno. ¿Qué interfaz funcional usarías para completar el espacio en blanco en estos casos?
+
+```java
+6: _______<List> ex1 = x -> "".equals(x.get(0));
+7: _______<Long> ex2 = (Long l) -> System.out.println(l);
+8: _______<String, String> ex3 = (s1, s2) -> false;
+```
+
+De nuevo, piensa en las respuestas antes de continuar. ¿Listo? La línea 6 pasa un parámetro de tipo `List` a la lambda y devuelve un `boolean`. Esto nos indica que es un `Predicate` o una `Function`. Dado que la declaración genérica solo tiene un parámetro, es un `Predicate`.
+
+La línea 7 pasa un parámetro de tipo `Long` a la lambda y no devuelve nada. Esto nos indica que es un `Consumer`. La línea 8 toma dos parámetros y devuelve un `boolean`. Cuando ves que se devuelve un `boolean`, piensa en `Predicate` a menos que los genéricos especifiquen un tipo de retorno `Boolean`. En este caso, hay dos parámetros, por lo que es un `BiPredicate`.
+
+¿Te están resultando fáciles estos ejercicios? Si no, revisa la Tabla 15.1 de nuevo. No estamos bromeando. Necesitas conocer la tabla muy bien. Ahora que estás fresco después de estudiar la tabla, vamos a jugar “identificar el error”. Estos están diseñados para ser complicados:
+
+```java
+6: Function<List<String>> ex1 = x -> x.get(0); // NO COMPILA
+7: UnaryOperator<Long> ex2 = (Long l) -> 3.14; // NO COMPILA
+8: Predicate ex4 = String::isEmpty; // NO COMPILA
+```
+
+La línea 6 afirma ser una `Function`. Una `Function` necesita especificar dos genéricos: el tipo del parámetro de entrada y el tipo del valor de retorno. El tipo del valor de retorno falta en la línea 6, lo que hace que el código no compile. La línea 7 es un `UnaryOperator`, que devuelve el mismo tipo que se le pasa. El ejemplo devuelve un `double` en lugar de un `Long`, lo que hace que el código no compile.
+
+La línea 8 está faltando el genérico para `Predicate`. Esto hace que el parámetro que se pasó sea un `Object` en lugar de una `String`. La lambda espera una `String` porque llama a un método que existe en `String` en lugar de en `Object`. Por lo tanto, no compila.
+
+### MÉTODOS DE CONVENIENCIA EN LAS INTERFACES FUNCIONALES
+
+Por definición, todas las interfaces funcionales tienen un único método abstracto. Sin embargo, esto no significa que solo puedan tener un método. Varias de las interfaces funcionales comunes proporcionan una serie de métodos predeterminados útiles.
+
+La **Tabla 15.2** muestra los métodos de conveniencia en las interfaces funcionales incorporadas que necesitas conocer para el examen. Todos estos facilitan la modificación o combinación de interfaces funcionales del mismo tipo. Nota que la Tabla 15.2 solo muestra las interfaces principales. Las interfaces `BiConsumer`, `BiFunction` y `BiPredicate` tienen métodos similares disponibles.
+
+Comencemos con estas dos variables de `Predicate`.
+
+```java
+Predicate<String> egg = s -> s.contains("egg");
+Predicate<String> brown = s -> s.contains("brown");
+```
+
+#### TABLA 15.2 Métodos de Conveniencia
+
+| Interfaz         | Tipo de retorno del método | Nombre del método | Parámetros del método |
+|------------------|----------------------------|-------------------|-----------------------|
+| `Consumer`       | `Consumer`                 | `andThen()`       | `Consumer`            |
+| `Function`       | `Function`                 | `andThen()`       | `Function`            |
+| `Function`       | `Function`                 | `compose()`       | `Function`            |
+| `Predicate`      | `Predicate`                | `and()`           | `Predicate`           |
+| `Predicate`      | `Predicate`                | `negate()`        | —                     |
+| `Predicate`      | `Predicate`                | `or()`            | `Predicate`           |
+
+Ahora queremos un `Predicate` para huevos marrones y otro para todos los demás colores de huevos. Podríamos escribir esto manualmente, como se muestra aquí:
+
+```java
+Predicate<String> brownEggs = 
+    s -> s.contains("egg") && s.contains("brown");
+Predicate<String> otherEggs = 
+    s -> s.contains("egg") && !s.contains("brown");
+```
+
+Esto funciona, pero no es ideal. Es un poco largo de leer y contiene duplicación. ¿Qué pasa si decidimos que la letra "e" en "egg" debe estar en mayúscula? Tendríamos que cambiarlo en tres variables: `egg`, `brownEggs` y `otherEggs`.
+
+Una mejor manera de manejar esta situación es usar dos de los métodos predeterminados de `Predicate`.
+
+```java
+Predicate<String> brownEggs = egg.and(brown);
+Predicate<String> otherEggs = egg.and(brown.negate());
+```
+
+¡Genial! Ahora estamos reutilizando la lógica en las variables originales de `Predicate` para construir dos nuevas. Es más corto y más claro cuál es la relación entre las variables. También podemos cambiar la ortografía de `egg` en un solo lugar, y los otros dos objetos tendrán una nueva lógica porque lo referencian.
+
+Pasando a `Consumer`, echemos un vistazo al método `andThen()`, que ejecuta dos interfaces funcionales en secuencia.
+
+```java
+Consumer<String> c1 = x -> System.out.print("1: " + x);
+Consumer<String> c2 = x -> System.out.print(",2: " + x);
+Consumer<String> combined = c1.andThen(c2);
+combined.accept("Annie"); // 1: Annie,2: Annie
+```
+
+Observa cómo el mismo parámetro se pasa tanto a `c1` como a `c2`. Esto muestra que las instancias de `Consumer` se ejecutan en secuencia y son independientes entre sí.
+
+En contraste, el método `compose()` en `Function` encadena interfaces funcionales. Sin embargo, pasa la salida de una al ingreso de otra.
+
+```java
+Function<Integer, Integer> before = x -> x + 1;
+Function<Integer, Integer> after = x -> x * 2;
+Function<Integer, Integer> combined = after.compose(before);
+System.out.println(combined.apply(3)); // 8
+```
+
+Esta vez, `before` se ejecuta primero, convirtiendo el `3` en un `4`. Luego, `after` se ejecuta, duplicando el `4` a `8`.
+
+Todos los métodos en esta sección son útiles para simplificar tu código mientras trabajas con interfaces funcionales.
 
 
 
