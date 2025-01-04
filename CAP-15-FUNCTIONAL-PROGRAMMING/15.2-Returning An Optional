@@ -1,1 +1,65 @@
 
+### RETORNANDO UN `Optional`
+
+Supongamos que estás tomando una clase introductoria de Java y recibes puntuaciones de 90 y 100 en los dos primeros exámenes. Ahora, te preguntamos cuál es tu promedio. Un promedio se calcula sumando las puntuaciones y dividiendo por el número de puntuaciones, así que tienes (90 + 100) / 2. Esto da 190 / 2, por lo que respondes con 95. ¡Genial!
+
+Ahora supongamos que estás tomando tu segunda clase de Java y es el primer día de clase. Te preguntamos cuál es tu promedio en esta clase que acaba de comenzar. Aún no has tomado ningún examen, así que no tienes nada para promediar. No sería preciso decir que tu promedio es cero. Eso suena mal y no es cierto. Simplemente no hay datos, así que aún no tienes un promedio.
+
+¿Cómo expresamos esta respuesta de “no lo sabemos” o “no aplicable” en Java? Usamos el tipo `Optional`. Un `Optional` se crea usando una fábrica. Puedes solicitar un `Optional` vacío o pasar un valor para que el `Optional` lo envuelva. Piensa en un `Optional` como una caja que podría tener algo dentro o podría estar vacía. La **Figura 15.1** muestra ambas opciones.
+
+### CREANDO UN `Optional`
+
+Así es como codificamos nuestro método de promedio:
+
+```java
+public static Optional<Double> average(int... scores) {
+    if (scores.length == 0) return Optional.empty();
+    int sum = 0;
+    for (int score : scores) sum += score;
+    return Optional.of((double) sum / scores.length);
+}
+```
+
+La línea 11 retorna un `Optional` vacío cuando no podemos calcular un promedio. Las líneas 12 y 13 suman las puntuaciones. Hay una forma de programación funcional para hacer estas operaciones matemáticas, pero lo veremos más adelante en el capítulo. De hecho, todo el método podría escribirse en una sola línea, ¡pero eso no te enseñaría cómo funciona `Optional`! La línea 14 crea un `Optional` para envolver el promedio. Llamar al método muestra lo que hay en nuestras dos cajas.
+
+```java
+System.out.println(average(90, 100)); // Optional[95.0]
+System.out.println(average()); // Optional.empty
+```
+
+Puedes ver que un `Optional` contiene un valor y el otro está vacío. Normalmente, queremos verificar si hay un valor y/o extraerlo de la caja. Aquí hay una forma de hacerlo:
+
+```java
+Optional<Double> opt = average(90, 100);
+if (opt.isPresent())
+    System.out.println(opt.get()); // 95.0
+```
+
+La línea 21 verifica si el `Optional` realmente contiene un valor. La línea 22 lo imprime. ¿Qué pasa si no hacemos la verificación y el `Optional` está vacío?
+
+```java
+Optional<Double> opt = average();
+System.out.println(opt.get()); // NoSuchElementException
+```
+
+Obtendríamos una excepción ya que no hay ningún valor dentro del `Optional`.
+
+```
+java.util.NoSuchElementException: No value present
+```
+
+Al crear un `Optional`, es común querer usar `empty()` cuando el valor es `null`. Puedes hacer esto con una sentencia `if` o con el operador ternario. Usamos el operador ternario (`? :`) para simplificar el código, que viste en el Capítulo 3, “Operadores”.
+
+```java
+Optional o = (value == null) ? Optional.empty() :
+             Optional.of(value);
+```
+
+Si `value` es `null`, `o` se asigna al `Optional` vacío. De lo contrario, envolvemos el valor. Dado que este es un patrón tan común, Java proporciona un método de fábrica para hacer lo mismo.
+
+```java
+Optional o = Optional.ofNullable(value);
+```
+
+Esto cubre los métodos estáticos que necesitas conocer sobre `Optional`. La **Tabla 15.3** resume la mayoría de los métodos de instancia en `Optional` que necesitas saber para el examen. Hay algunos otros que involucran encadenamiento. Los cubriremos más adelante en el capítulo.
+
